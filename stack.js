@@ -1,3 +1,11 @@
+class Node {
+    constructor(data, next = null) {
+        this.data = data;
+
+        this.next = next;
+    }
+}
+
 class Stack {
     constructor(maxSize) {
         if (typeof maxSize === 'undefined' || maxSize > 10) {
@@ -10,11 +18,11 @@ class Stack {
 
         this.count = 0;
 
-        this.data = [];
+        this.top = null;
     }
 
     isFull() {
-        return this.data.length >= this.maxSize;
+        return this.count >= this.maxSize;
     }
 
     push(elem) {
@@ -24,7 +32,11 @@ class Stack {
             throw new Error ('Parameter is not a valid number.');
         }
 
-        this.data[this.count] = elem;
+        const newNode = new Node(elem);
+
+        newNode.next = this.top;
+
+        this.top = newNode;
 
         this.count++; 
     }
@@ -35,13 +47,13 @@ class Stack {
     
     pop() {
         if (this.isEmpty() === false) {
+            let temp = this.top;
+
+            this.top = this.top.next;
+
+            temp = null;
+
             this.count--;
-
-            let result = this.data[this.count];
-
-            delete this.data[this.count];
-
-            return result;
         } else {
             throw new Error ('Stack Underflow.');
         }
@@ -52,11 +64,21 @@ class Stack {
             return null;
         }
 
-        return this.data[this.count - 1];
+        return this.top.data;
     }
 
     toArray() {
-        return this.data;
+        const nodes = [];
+
+        let currentNode = this.top;
+
+        while (currentNode) {
+            nodes.push(currentNode);
+
+            currentNode = currentNode.next;
+        }
+
+        return nodes;
     }
 
     static fromIterable(iterable) {
